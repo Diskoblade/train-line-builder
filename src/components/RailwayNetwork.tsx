@@ -13,12 +13,19 @@ interface Station {
   isMajor: boolean;
 }
 
+interface ElevationPoint {
+  distance_km: number;
+  elevation_m: number;
+}
+
 interface Track {
   id: string;
   from: string;
   to: string;
   type: 'main' | 'express' | 'local';
   length: number;
+  elevation_profile: ElevationPoint[];
+  num_curves: number;
 }
 
 interface Train {
@@ -61,19 +68,187 @@ const RailwayNetwork: React.FC = () => {
   ];
 
   const tracks: Track[] = [
-    { id: 't1', from: 'bangalore', to: 'davanagere', type: 'main', length: 180 },
-    { id: 't2', from: 'davanagere', to: 'ballari', type: 'express', length: 200 },
-    { id: 't3', from: 'ballari', to: 'anantapur', type: 'main', length: 120 },
-    { id: 't4', from: 'anantapur', to: 'kadapa', type: 'local', length: 140 },
-    { id: 't5', from: 'bangalore', to: 'mysuru', type: 'express', length: 150 },
-    { id: 't6', from: 'bangalore', to: 'tumakuru', type: 'local', length: 80 },
-    { id: 't7', from: 'bangalore', to: 'hosur', type: 'main', length: 60 },
-    { id: 't8', from: 'hosur', to: 'krishnagiri', type: 'main', length: 100 },
-    { id: 't9', from: 'krishnagiri', to: 'chennai', type: 'express', length: 200 },
-    { id: 't10', from: 'kadapa', to: 'chennai', type: 'main', length: 180 },
+    { 
+      id: 't1', 
+      from: 'bangalore', 
+      to: 'davanagere', 
+      type: 'main', 
+      length: 180,
+      elevation_profile: [
+        { distance_km: 0, elevation_m: 900 },
+        { distance_km: 90, elevation_m: 800 },
+        { distance_km: 180, elevation_m: 600 }
+      ],
+      num_curves: 8
+    },
+    { 
+      id: 't2', 
+      from: 'davanagere', 
+      to: 'ballari', 
+      type: 'express', 
+      length: 200,
+      elevation_profile: [
+        { distance_km: 0, elevation_m: 600 },
+        { distance_km: 100, elevation_m: 500 },
+        { distance_km: 200, elevation_m: 450 }
+      ],
+      num_curves: 5
+    },
+    { 
+      id: 't3', 
+      from: 'ballari', 
+      to: 'anantapur', 
+      type: 'main', 
+      length: 120,
+      elevation_profile: [
+        { distance_km: 0, elevation_m: 450 },
+        { distance_km: 60, elevation_m: 500 },
+        { distance_km: 120, elevation_m: 520 }
+      ],
+      num_curves: 6
+    },
+    { 
+      id: 't4', 
+      from: 'anantapur', 
+      to: 'kadapa', 
+      type: 'local', 
+      length: 140,
+      elevation_profile: [
+        { distance_km: 0, elevation_m: 520 },
+        { distance_km: 70, elevation_m: 480 },
+        { distance_km: 140, elevation_m: 400 }
+      ],
+      num_curves: 12
+    },
+    { 
+      id: 't5', 
+      from: 'bangalore', 
+      to: 'mysuru', 
+      type: 'express', 
+      length: 150,
+      elevation_profile: [
+        { distance_km: 0, elevation_m: 900 },
+        { distance_km: 75, elevation_m: 800 },
+        { distance_km: 150, elevation_m: 770 }
+      ],
+      num_curves: 4
+    },
+    { 
+      id: 't6', 
+      from: 'bangalore', 
+      to: 'tumakuru', 
+      type: 'local', 
+      length: 80,
+      elevation_profile: [
+        { distance_km: 0, elevation_m: 900 },
+        { distance_km: 40, elevation_m: 850 },
+        { distance_km: 80, elevation_m: 820 }
+      ],
+      num_curves: 7
+    },
+    { 
+      id: 't7', 
+      from: 'bangalore', 
+      to: 'hosur', 
+      type: 'main', 
+      length: 60,
+      elevation_profile: [
+        { distance_km: 0, elevation_m: 900 },
+        { distance_km: 30, elevation_m: 880 },
+        { distance_km: 60, elevation_m: 850 }
+      ],
+      num_curves: 3
+    },
+    { 
+      id: 't8', 
+      from: 'hosur', 
+      to: 'krishnagiri', 
+      type: 'main', 
+      length: 100,
+      elevation_profile: [
+        { distance_km: 0, elevation_m: 850 },
+        { distance_km: 50, elevation_m: 700 },
+        { distance_km: 100, elevation_m: 600 }
+      ],
+      num_curves: 8
+    },
+    { 
+      id: 't9', 
+      from: 'krishnagiri', 
+      to: 'chennai', 
+      type: 'express', 
+      length: 200,
+      elevation_profile: [
+        { distance_km: 0, elevation_m: 600 },
+        { distance_km: 100, elevation_m: 300 },
+        { distance_km: 200, elevation_m: 50 }
+      ],
+      num_curves: 6
+    },
+    { 
+      id: 't10', 
+      from: 'kadapa', 
+      to: 'chennai', 
+      type: 'main', 
+      length: 180,
+      elevation_profile: [
+        { distance_km: 0, elevation_m: 400 },
+        { distance_km: 90, elevation_m: 200 },
+        { distance_km: 180, elevation_m: 50 }
+      ],
+      num_curves: 9
+    },
   ];
 
   const getStationById = (id: string) => stations.find(s => s.id === id);
+
+  const calculateTrainTravelTimeContinuous = (
+    elevationProfile: ElevationPoint[],
+    weightTonnes: number,
+    averageSpeedKmh: number,
+    numCurves: number
+  ): number => {
+    if (!elevationProfile || elevationProfile.length < 2) {
+      return 1; // Default to 1 hour if invalid profile
+    }
+    if (averageSpeedKmh <= 0) {
+      return Infinity;
+    }
+
+    let totalTimeHours = 0.0;
+
+    // Iterate through each segment of the track
+    for (let i = 0; i < elevationProfile.length - 1; i++) {
+      const startPoint = elevationProfile[i];
+      const endPoint = elevationProfile[i + 1];
+      
+      const segmentLengthKm = endPoint.distance_km - startPoint.distance_km;
+      const elevationChangeM = endPoint.elevation_m - startPoint.elevation_m;
+      
+      // Base time for the segment (on flat track)
+      const baseSegmentTimeHours = segmentLengthKm / averageSpeedKmh;
+      
+      // Calculate slope influence
+      const slopeInfluence = (elevationChangeM / segmentLengthKm) * (weightTonnes / 1000);
+      const effectiveSpeedFactor = Math.max(0.01, 1.0 - (slopeInfluence * 1.5e-3));
+      
+      const segmentTimeHours = baseSegmentTimeHours / effectiveSpeedFactor;
+      totalTimeHours += segmentTimeHours;
+    }
+
+    // Add penalty for curves (3 minutes per curve)
+    const curvePenaltyHours = numCurves * 0.05;
+    totalTimeHours += curvePenaltyHours;
+
+    return totalTimeHours;
+  };
+
+  const getTrackById = (from: string, to: string) => {
+    return tracks.find(track => 
+      (track.from === from && track.to === to) || 
+      (track.from === to && track.to === from)
+    );
+  };
 
   const calculateTrainPosition = (train: Train) => {
     const fromStation = getStationById(train.from);
@@ -134,14 +309,27 @@ const RailwayNetwork: React.FC = () => {
     }
   };
 
-  // Animate trains
+  // Animate trains with realistic travel times
   useEffect(() => {
     const interval = setInterval(() => {
       setTrains(prevTrains => 
         prevTrains.map(train => {
           if (!train.isActive) return train;
           
-          const newProgress = train.progress + (train.speed * 0.5);
+          const track = getTrackById(train.from, train.to);
+          if (!track) return train;
+
+          // Calculate realistic travel time for this track
+          const travelTimeHours = calculateTrainTravelTimeContinuous(
+            track.elevation_profile,
+            train.weight,
+            train.speed,
+            track.num_curves
+          );
+          
+          // Convert to progress increment (100% over total travel time)
+          const progressIncrement = (100 / (travelTimeHours * 3600)) * 100; // per 100ms
+          const newProgress = train.progress + progressIncrement;
           
           if (newProgress >= 100) {
             // Train reached destination, reverse direction
