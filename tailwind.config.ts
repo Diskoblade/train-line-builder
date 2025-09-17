@@ -47,6 +47,19 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        railway: {
+          track: "hsl(var(--railway-track))",
+          "track-alt": "hsl(var(--railway-track-alt))",
+          "track-express": "hsl(var(--railway-track-express))",
+          station: "hsl(var(--railway-station))",
+          "station-major": "hsl(var(--railway-station-major))",
+        },
+        train: {
+          primary: "hsl(var(--train-primary))",
+          secondary: "hsl(var(--train-secondary))",
+          express: "hsl(var(--train-express))",
+          local: "hsl(var(--train-local))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -84,6 +97,9 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "train-move": "train-move 2s ease-in-out infinite",
+        "pulse-station": "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "fade-in": "fade-in 0.5s ease-out",
       },
     },
   },

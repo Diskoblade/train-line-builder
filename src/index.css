@@ -8,35 +8,63 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 210 20% 98%;
+    --foreground: 215 25% 27%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 215 25% 27%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 215 25% 27%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 220 90% 56%;
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary-foreground: 215 25% 27%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
     --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent-foreground: 215 25% 27%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 220 90% 56%;
 
     --radius: 0.5rem;
+
+    /* Railway-specific design tokens */
+    --railway-track: 120 40% 45%;
+    --railway-track-alt: 0 70% 55%;
+    --railway-track-express: 240 80% 60%;
+    --railway-station: 215 25% 27%;
+    --railway-station-major: 220 90% 56%;
+    
+    --train-primary: 220 90% 56%;
+    --train-secondary: 120 40% 45%;
+    --train-express: 0 70% 55%;
+    --train-local: 280 60% 65%;
+    
+    --network-bg: 210 20% 98%;
+    --control-panel: 0 0% 100%;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(220 90% 56%), hsl(220 90% 66%));
+    --gradient-track: linear-gradient(90deg, hsl(120 40% 45%), hsl(120 40% 55%));
+    
+    /* Shadows */
+    --shadow-train: 0 4px 12px hsl(220 90% 56% / 0.3);
+    --shadow-station: 0 2px 8px hsl(215 25% 27% / 0.2);
+    --shadow-panel: 0 8px 32px hsl(215 25% 27% / 0.1);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-train: all 2s ease-in-out;
 
     --sidebar-background: 0 0% 98%;
 
@@ -56,33 +84,52 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 215 28% 17%;
     --foreground: 210 40% 98%;
 
-    --card: 222.2 84% 4.9%;
+    --card: 215 28% 20%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 215 28% 20%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 220 90% 66%;
+    --primary-foreground: 215 28% 17%;
 
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 215 28% 25%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
+    --muted: 215 28% 25%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 217.2 32.6% 17.5%;
+    --accent: 215 28% 25%;
     --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 62.8% 50.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: 215 28% 25%;
+    --input: 215 28% 25%;
+    --ring: 220 90% 66%;
+    
+    /* Dark mode railway tokens */
+    --railway-track: 120 40% 55%;
+    --railway-track-alt: 0 70% 65%;
+    --railway-track-express: 240 80% 70%;
+    --railway-station: 210 40% 98%;
+    --railway-station-major: 220 90% 66%;
+    
+    --train-primary: 220 90% 66%;
+    --train-secondary: 120 40% 55%;
+    --train-express: 0 70% 65%;
+    --train-local: 280 60% 75%;
+    
+    --network-bg: 215 28% 17%;
+    --control-panel: 215 28% 20%;
+    
+    --shadow-train: 0 4px 12px hsl(220 90% 66% / 0.4);
+    --shadow-station: 0 2px 8px hsl(210 40% 98% / 0.2);
+    --shadow-panel: 0 8px 32px hsl(0 0% 0% / 0.3);
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -100,6 +147,44 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+@layer components {
+  .railway-track {
+    @apply stroke-[hsl(var(--railway-track))] stroke-2;
+  }
+  
+  .railway-track-alt {
+    @apply stroke-[hsl(var(--railway-track-alt))] stroke-2;
+  }
+  
+  .railway-track-express {
+    @apply stroke-[hsl(var(--railway-track-express))] stroke-2;
+  }
+  
+  .railway-station {
+    @apply fill-[hsl(var(--railway-station))] stroke-[hsl(var(--railway-station))] stroke-2;
+  }
+  
+  .railway-station-major {
+    @apply fill-[hsl(var(--railway-station-major))] stroke-[hsl(var(--railway-station-major))] stroke-2;
+  }
+  
+  .train-circle {
+    transition: all 2s ease-in-out;
+    filter: drop-shadow(var(--shadow-train));
+  }
+  
+  .control-panel {
+    background: hsl(var(--control-panel));
+    box-shadow: var(--shadow-panel);
+  }
+}
+
+@layer utilities {
+  .train-move {
+    transition: all 2s ease-in-out;
   }
 }
